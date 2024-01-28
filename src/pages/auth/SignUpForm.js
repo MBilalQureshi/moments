@@ -5,7 +5,7 @@ import styles from "../../styles/SignInUpForm.module.css";
 import btnStyles from "../../styles/Button.module.css";
 import appStyles from "../../App.module.css";
 
-import { Form, Button, Image, Col, Row, Container } from "react-bootstrap";
+import { Form, Button, Image, Col, Row, Container, Alert } from "react-bootstrap";
 import axios from "axios";
 
 const SignUpForm = () => {
@@ -14,17 +14,20 @@ const SignUpForm = () => {
         password1: '',
         password2: '',
     });
-    
+  
   const { username, password1, password2} = signUpData
-  // this is to redirect from signup to sign in
+  // this is to redirect from signup to sign in, we'll use useHistory hook
   const history = useHistory();
+  
+  const [errors, setErrors] = useState({});
+
   const handleChange = (event) =>{
     setSignUpData({
         ...signUpData,
         // we can use below function to handle any change by user we we do not need to write them seprately this is know as "Computed properties"
         [event.target.name]: event.target.value,
-    })
-  }
+    });
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -32,6 +35,9 @@ const SignUpForm = () => {
       await axios.post('/dj-rest-auth/registration/', signUpData)
       history.push('/signin')
     } catch(err){
+      // This code with the question mark is called  optional chaining. What it does is check if  
+      // response is defined before looking for the data.  So if response isn’t defined, it won’t throw an error.
+      setErrors(err.response?.data);
 
     }
   }
@@ -49,6 +55,10 @@ const SignUpForm = () => {
                 value={username} 
                 onChange={handleChange} />
             </Form.Group>
+            {/* Show username errors here */}
+            {errors.username?.map((message, idx)=> (
+              <Alert variant="warning" key={idx}>{message}</Alert>
+              ) )}
 
             <Form.Group controlId="password1">
                 <Form.Label className="d-none">Password</Form.Label>
@@ -57,7 +67,11 @@ const SignUpForm = () => {
                 value={password1}
                 onChange={handleChange} />
             </Form.Group>
-
+            {/* Show pass1 errors here */}
+            {errors.password1?.map((message,idx)=>(
+              <Alert variant="warning" key={idx}>{message}</Alert>
+            ))}
+    
             <Form.Group controlId="password2">
                 <Form.Label className="d-none">Confirm Password</Form.Label>
                 <Form.Control type="password" placeholder="Password" name="password2"
@@ -65,10 +79,19 @@ const SignUpForm = () => {
                 value={password2}
                 onChange={handleChange} />
             </Form.Group>
+            {/* Show pass2 errors here */}
+            {errors.password2?.map((message, idx)=>(
+              <Alert variant="warning" key={idx}>{message}</Alert>
+            ))}
 
             <Button className={`${btnStyles.Button} ${btnStyles.Wide} ${btnStyles.Bright}`} type="submit">
                 Sign Up
             </Button>
+
+            {/* Add non_fields_erros like if password does not match */}
+            {errors.non_field_errors?.map((message, idx)=>(
+              <Alert variant="warning" key={idx} className="mt-3">{message}</Alert>
+            ))}
         </Form>
 
         </Container>
