@@ -77,7 +77,7 @@ export const CurrentUserProvider = ({children}) => {
           if(err.response?.status === 401){
             try{
               // now try to refresh the access token
-              await axios.post('/dj-rest-auth/token/refresh')
+              await axios.post('/dj-rest-auth/token/refresh/')
             } catch(err){
               // if above refresh fails we'll redirect user to sign in page
               setCurrentUser(prevCurrentUser => {
