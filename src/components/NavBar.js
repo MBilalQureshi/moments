@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Navbar, Container, Nav } from 'react-bootstrap'
 import logo from '../assets/logo.png'
 import styles from '../styles/NavBar.module.css'
@@ -16,6 +16,29 @@ const NavBar = () => {
 
     // to set the current user to null when logged out
     const setCurrentUser = useSetCurrentUser()
+
+    // false teslling our burger menu is initially collapsed
+    const [expanded, setExpanded] = useState(false)
+    // we ref to burger icon, useRef so that value persist and set initial value to null
+    const ref = useRef(null)
+    useEffect(()=>{
+        const handleClickOutside = (event) =>{
+            // Because we called the useRef hook,  the Navbar.Toggle is saved in the ref  
+            // variable’s current attribute. We’ll first  check the element has been assigned to it.  
+            // We need this because its initial value is  set to null. And then we’ll check if the  
+            // user has clicked away from the referenced button.  
+            // If they have, we’ll call setExpanded with  false, which will close our dropdown menu.
+            if(ref.current && !ref.current.contains(event.target)){
+                setExpanded(false)
+            }
+        }
+
+        document.addEventListener('mouseup',handleClickOutside)
+        //return statement clean-up funtion to remove ent listner, good practice
+        return () =>{
+            document.removeEventListener('mouseup',handleClickOutside)
+        }
+    },[ref])
     const handleSignOut = async (event) => {
         try{
             await axios.post('dj-rest-auth/logout/')
@@ -43,7 +66,7 @@ const NavBar = () => {
     </>
   return (
     // in normal bootstart fixed-top but in react its fixed=top
-    <Navbar className={styles.NavBar} expand="md" fixed='top'>
+    <Navbar expanded={expanded} className={styles.NavBar} expand="md" fixed='top'>
         <Container>
             <NavLink to='/'>
                 <Navbar.Brand>
@@ -53,7 +76,11 @@ const NavBar = () => {
 
             {currentUser && addPostIcon}
 
-            <Navbar.Toggle aria-controls="basic-navbar-nav" />
+            <Navbar.Toggle
+                // to ref this Navbar toggle element to detect user clicked inside or outside
+                ref={ref}
+                onClick={()=> setExpanded(!expanded)} 
+                aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
                 <Nav className="ml-auto text-left">
                     <NavLink exact className={styles.NavLink} activeClassName={styles.Active} to='/'><i className="fa-solid fa-house"></i>Home</NavLink>
