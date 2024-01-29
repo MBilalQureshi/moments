@@ -14,13 +14,13 @@ import styles from "../../styles/SignInUpForm.module.css";
 import btnStyles from "../../styles/Button.module.css";
 import appStyles from "../../App.module.css";
 import axios from "axios";
-import { useCurrentUser } from "../../context/CurrentUserContext";
+import { useSetCurrentUser } from "../../contexts/CurrentUserContext";
 
 function SignInForm() {
 
     // const setCurrentUser = useContext(SetCurrentUserContext)
-    //we'll change above code to below as its now defined already in CurrentUserContext.js
-    const setCurrentUser = useCurrentUser()
+    //we'll change above code to below as its now defined in CurrentUserContext.js
+    const setCurrentUser = useSetCurrentUser()
     
     const [signInData, setSignInData] = useState({
         username : '',
