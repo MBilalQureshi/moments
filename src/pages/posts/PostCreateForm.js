@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
@@ -13,6 +13,8 @@ import styles from "../../styles/PostCreateEditForm.module.css";
 import appStyles from "../../App.module.css";
 import btnStyles from "../../styles/Button.module.css";
 import Asset from "../../components/Asset";
+import { useHistory } from "react-router-dom";
+import { axiosReq } from "../../api/axiosDefaults";
 
 function PostCreateForm() {
 
@@ -23,15 +25,18 @@ function PostCreateForm() {
     content: '',
     image: '',
   })
-//   [title , content , image] = postData WRONG
-const {title, content, image} = postData
-
+  //   [title , content , image] = postData WRONG
+  const {title, content, image} = postData
+  // we need to create a  reference to our Form.File component so that we can access the image  file when we submit our form.  
+  const imageInput = useRef(null)
+  const history = useHistory()
 const handleChange = (event) => {
     setPostData({
         ...postData,
         [event.target.name]: event.target.value,
     })
 }
+
 //https://developer.mozilla.org/en-US/docs/Web/API/URL
 const handleChangeImage = (event) => {
     //incase user wants to change the image link after addig on we need to revokeObjectURL_static to clear browser refrence to previous file
@@ -44,6 +49,28 @@ const handleChangeImage = (event) => {
         image: URL.createObjectURL(event.target.files[0],),
     })
 }
+
+const handleSubmit = async (event) => {
+    event.preventDefault()
+    // https://developer.mozilla.org/en-US/docs/Web/API/FormData
+    const formData = new FormData()
+    formData.append('title', title)
+    formData.append('content', content)
+    // get first file in image attribute files array
+    formData.append('image',imageInput.current.files[0])
+
+    //refresh user access token before making post request
+    try{
+        const {data} = await axiosReq.post('/posts/', formData)
+        history.push(`/posts/${data.id}`)
+    }catch(err){
+        console.log(err)
+        if(err.response?.status !== 401){
+            setErrors(err.response?.data)
+        } 
+    }
+}
+
 
   const textFields = (
     <div className="text-center">
@@ -80,7 +107,7 @@ const handleChangeImage = (event) => {
   );
 
   return (
-    <Form>
+    <Form onSubmit={handleSubmit}>
       <Row>
         <Col className="py-2 p-0 p-md-2" md={7} lg={8}>
           <Container
@@ -105,9 +132,11 @@ const handleChangeImage = (event) => {
                 <Asset src={Upload} message="Click or tap to upload an image" />
               </Form.Label>
             )}
-                {/* Image upload '/*' so that only images are accepted */}
-                <Form.File id="image-upload" accept="image/*"
-                 onChange={handleChangeImage} />
+            {/* Image upload '/*' so that only images are accepted */}
+            <Form.File 
+                id="image-upload" accept="image/*"
+                onChange={handleChangeImage} 
+                ref={imageInput} />
             </Form.Group>
             <div className="d-md-none">{textFields}</div>
           </Container>
