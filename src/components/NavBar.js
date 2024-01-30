@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React from 'react'
 import { Navbar, Container, Nav } from 'react-bootstrap'
 import logo from '../assets/logo.png'
 import styles from '../styles/NavBar.module.css'
@@ -6,6 +6,7 @@ import { NavLink } from 'react-router-dom'
 import { useCurrentUser, useSetCurrentUser } from '../contexts/CurrentUserContext'
 import Avatar from './Avatar'
 import axios from 'axios'
+import useClickOutsideToggle from '../hooks/useClickOutsideToggle'
 
 
 const NavBar = () => {
@@ -17,28 +18,6 @@ const NavBar = () => {
     // to set the current user to null when logged out
     const setCurrentUser = useSetCurrentUser()
 
-    // false teslling our burger menu is initially collapsed
-    const [expanded, setExpanded] = useState(false)
-    // we ref to burger icon, useRef so that value persist and set initial value to null
-    const ref = useRef(null)
-    useEffect(()=>{
-        const handleClickOutside = (event) =>{
-            // Because we called the useRef hook,  the Navbar.Toggle is saved in the ref  
-            // variable’s current attribute. We’ll first  check the element has been assigned to it.  
-            // We need this because its initial value is  set to null. And then we’ll check if the  
-            // user has clicked away from the referenced button.  
-            // If they have, we’ll call setExpanded with  false, which will close our dropdown menu.
-            if(ref.current && !ref.current.contains(event.target)){
-                setExpanded(false)
-            }
-        }
-
-        document.addEventListener('mouseup',handleClickOutside)
-        //return statement clean-up funtion to remove ent listner, good practice
-        return () =>{
-            document.removeEventListener('mouseup',handleClickOutside)
-        }
-    },[ref])
     const handleSignOut = async (event) => {
         try{
             await axios.post('dj-rest-auth/logout/')
@@ -47,6 +26,9 @@ const NavBar = () => {
             console.log(err)
         }
     }
+
+    //well import our toggle custom hook here
+    const {expanded, setExpanded, ref} = useClickOutsideToggle()
 
     const addPostIcon = (
         <NavLink className={styles.NavLink} activeClassName={styles.Active} to='/posts/create'><i className="far fa-plus-square"></i>Add Post</NavLink>
