@@ -15,6 +15,7 @@ import btnStyles from "../../styles/Button.module.css";
 import Asset from "../../components/Asset";
 import { useHistory } from "react-router-dom";
 import { axiosReq } from "../../api/axiosDefaults";
+import { Alert } from "react-bootstrap";
 
 function PostCreateForm() {
 
@@ -82,6 +83,9 @@ const handleSubmit = async (event) => {
             value={title}
             onChange={handleChange} />
         </Form.Group>
+        {errors.title?.map((message, idx)=>(
+            <Alert variant="warning" key={idx}>{message}</Alert>
+        ))}
 
         <Form.Group controlId="content">
             <Form.Label>
@@ -91,12 +95,14 @@ const handleSubmit = async (event) => {
             value={content}
             onChange={handleChange} />
         </Form.Group>
-
+        {errors.content?.map((message, idx)=>(
+            <Alert variant="warning" key={idx}>{message}</Alert>
+        ))}
     
     
       <Button
         className={`${btnStyles.Button} ${btnStyles.Blue}`}
-        onClick={() => {}}
+        onClick={() => history.goBack()}
       >
         cancel
       </Button>
@@ -114,30 +120,34 @@ const handleSubmit = async (event) => {
             className={`${appStyles.Content} ${styles.Container} d-flex flex-column justify-content-center`}
           >
             <Form.Group className="text-center">
-            {image ? (
-                <>
-                    <figure>
-                        <Image className={appStyles.Image} src={image} rounded/>
-                    </figure>
-                    <div>
-                        <Form.Label className={`${btnStyles.Button} ${btnStyles.Blue} btn`} htmlFor="image-upload">
-                            Change the image
-                        </Form.Label>
-                    </div>
-                </>
-            ) : (
-                <Form.Label
-                className="d-flex justify-content-center"
-                htmlFor="image-upload">
-                <Asset src={Upload} message="Click or tap to upload an image" />
-              </Form.Label>
-            )}
-            {/* Image upload '/*' so that only images are accepted */}
-            <Form.File 
-                id="image-upload" accept="image/*"
-                onChange={handleChangeImage} 
-                ref={imageInput} />
+                {image ? (
+                    <>
+                        <figure>
+                            <Image className={appStyles.Image} src={image} rounded/>
+                        </figure>
+                        <div>
+                            <Form.Label className={`${btnStyles.Button} ${btnStyles.Blue} btn`} htmlFor="image-upload">
+                                Change the image
+                            </Form.Label>
+                        </div>
+                    </>
+                ) : (
+                    <Form.Label
+                    className="d-flex justify-content-center"
+                    htmlFor="image-upload">
+                    <Asset src={Upload} message="Click or tap to upload an image" />
+                </Form.Label>
+                )}
+                {/* Image upload '/*' so that only images are accepted */}
+                <Form.File
+                    id="image-upload" accept="image/*"
+                    onChange={handleChangeImage} 
+                    ref={imageInput} />
             </Form.Group>
+            {errors.image?.map((message, idx)=>(
+                <Alert variant="warning" key={idx}>{message}</Alert>
+            ))}
+
             <div className="d-md-none">{textFields}</div>
           </Container>
         </Col>
