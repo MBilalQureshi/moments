@@ -48,7 +48,7 @@ function PostPage() {
     <Row className="h-100">
       <Col className="py-2 p-0 p-lg-2" lg={8}>
         <p>Popular profiles for mobile</p>
-        <Post {...post.results[0]} /*<- key value pairs are passed in as props */ setPost={setPost} /*<- use it later to handle likes*/ postPage /*<- we don;t need value for it simply applying means it'll retun as truthy value*//>
+        <Post {...post.results[0]} /*<- key value pairs are passed in as props */ setPosts={setPost} /*<- use it later to handle likes*/ postPage /*<- we don;t need value for it simply applying means it'll retun as truthy value*//>
         <Container className={appStyles.Content}>
           Comments
         </Container>
