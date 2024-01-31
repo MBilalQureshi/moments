@@ -7,6 +7,7 @@ import Container from "react-bootstrap/Container";
 import appStyles from "../../App.module.css";
 import { useParams } from "react-router-dom";
 import { axiosReq } from "../../api/axiosDefaults";
+import Post from "./Post";
 
 function PostPage() {
     // useParams will fetch id from URL and the paramter we set in route inside app.js
@@ -47,7 +48,7 @@ function PostPage() {
     <Row className="h-100">
       <Col className="py-2 p-0 p-lg-2" lg={8}>
         <p>Popular profiles for mobile</p>
-        <p>Post component</p>
+        <Post {...post.results[0]} /*<- key value pairs are passed in as props */ setPost={setPost} /*<- use it later to handle likes*/ postPage /*<- we don;t need value for it simply applying means it'll retun as truthy value*//>
         <Container className={appStyles.Content}>
           Comments
         </Container>
