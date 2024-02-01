@@ -9,6 +9,9 @@ import appStyles from "../../App.module.css";
 import styles from "../../styles/PostsPage.module.css";
 import { useLocation } from "react-router-dom";
 import { axiosReq } from "../../api/axiosDefaults";
+import Post from "./Post";
+import NoResults from '../../assets/no-results.png'
+import Asset from "../../components/Asset";
 
 function PostsPage({message, filter = ""}) {
     // Seeting fetched post
@@ -23,7 +26,7 @@ function PostsPage({message, filter = ""}) {
     useEffect(()=>{
         const fetchPosts = async () => {
             try{
-                const {data} = await axiosReq.get(`/posts/${filter}`)
+                const {data} = await axiosReq.get(`/posts/?${filter}`)
                 setPosts(data)
                 setHasLoaded(true)
             }catch(err){
@@ -44,13 +47,19 @@ function PostsPage({message, filter = ""}) {
         {hasLoaded ? (
             <>
                 {posts.results.length ? (
-                    console.log('map over post and render each one')
+                    posts.results.map(post => (
+                        <Post key={post.id} {...post} setPosts={setPosts}/>
+                    ))
                 ) : (
-                    console.log('show no results assets')
+                    <Container className={appStyles.Content}>
+                        <Asset src={NoResults} message={message}/>
+                    </Container>
                 )}
             </>
         ) : (
-            console.log('show loading spinner')
+            <Container className={appStyles.Content}>
+                <Asset spinner />
+            </Container>
         )}
       </Col>
       <Col md={4} className="d-none d-lg-block p-0 p-lg-2">
