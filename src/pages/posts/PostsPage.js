@@ -14,7 +14,7 @@ import NoResults from '../../assets/no-results.png'
 import Asset from "../../components/Asset";
 
 function PostsPage({message, filter = ""}) {
-    // Seeting fetched post
+    // Setting fetched post
     const [posts, setPosts] = useState({
         results: []
     })
@@ -23,27 +23,42 @@ function PostsPage({message, filter = ""}) {
     // load posts again when user clicks home, feed , liked pages. to detect change we'll use useLoaction router hook that returns data where user is currently on
     const { pathname } = useLocation()
 
+    // query as in search bar
+    const [query, setQuery] = useState("")
     useEffect(()=>{
         const fetchPosts = async () => {
             try{
-                const {data} = await axiosReq.get(`/posts/?${filter}`)
+                // const {data} = await axiosReq.get(`/posts/?${filter}`) incorporating search as well below
+                const {data} = await axiosReq.get(`/posts/?${filter}search=${query}`);
                 setPosts(data)
                 setHasLoaded(true)
             }catch(err){
                 console.log(err)
             }
         }
-
         setHasLoaded(false)
-        fetchPosts()
+
+        // every key stroke on search is causing search request and it's not good practice apply one sec time out after a key stroke to fetchpost function as good practice
+        const timer = setTimeout(()=>{
+            fetchPosts();
+        },1000)
+        return () => {
+            clearTimeout();
+        }
         // we'll run this every time pathname or filter changes, also we'll set has Loaded to false as well so that loading spinner is shown to our users
-    },[filter, pathname])
+        // added query as well so that each time user search a request can be made
+    },[filter, pathname, query])
 
 
   return (
     <Row className="h-100">
       <Col className="py-2 p-0 p-lg-2" lg={8}>
         <p>Popular profiles mobile</p>
+        <i className={`fas fa-search ${styles.SearchIcon}`} />
+        <Form className={styles.SearchBar} onSubmit={(event) => event.preventDefault()}>
+            <Form.Control type="text" className="mr-sm-2" placeholder="Search posts"
+            value={query} onChange={(event) => setQuery(event.target.value)} />
+        </Form>
         {hasLoaded ? (
             <>
                 {posts.results.length ? (
