@@ -32,8 +32,9 @@ export const MoreDropdown = ({handleEdit, handleDelete}) => {
         <Dropdown.Toggle as={ThreeDots}>
             Custom toggle
         </Dropdown.Toggle>
-    
-        <Dropdown.Menu className="text-center">
+        {/* To be sure that the position of the dropdown menu is consistent across browsers, we need to add a popperConfig prop to our Dropdown.Menu component.
+        'popper' is a 3rd party library used by React-Bootstrap. Here we are passing a config object to make sure the dropdown menus position is fixed on all browsers. */}
+        <Dropdown.Menu className="text-center" popperConfig={{ strategy: "fixed" }}>
             <Dropdown.Item 
                 className={styles.DropdownItem}
                 onClick={handleEdit}
