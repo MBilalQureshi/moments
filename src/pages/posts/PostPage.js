@@ -9,6 +9,9 @@ import { useParams } from "react-router-dom";
 import { axiosReq } from "../../api/axiosDefaults";
 import Post from "./Post";
 
+import CommentCreateForm from "../comments/CommentCreateForm";
+import { useCurrentUser } from "../../contexts/CurrentUserContext";
+
 function PostPage() {
     // useParams will fetch id from URL and the paramter we set in route inside app.js
     const { id } = useParams();
@@ -16,6 +19,10 @@ function PostPage() {
         // we are setting it to array so that if we have one post or multiple the data type would be same
         results : [],
     })
+
+  const currentUser = useCurrentUser();
+  const profile_image = currentUser?.profile_image;
+  const [comments, setComments] = useState({ results: [] });
 
     useEffect(()=>{
         const handleMount = async () => {
@@ -50,7 +57,17 @@ function PostPage() {
         <p>Popular profiles for mobile</p>
         <Post {...post.results[0]} /*<- key value pairs are passed in as props */ setPosts={setPost} /*<- use it later to handle likes*/ postPage /*<- we don;t need value for it simply applying means it'll retun as truthy value*//>
         <Container className={appStyles.Content}>
-          Comments
+          {currentUser ? (
+          <CommentCreateForm
+          profile_id={currentUser.profile_id}
+          profileImage={profile_image}
+          post={id}
+          setPost={setPost}
+          setComments={setComments}
+        />
+        ) : comments.results.length ? (
+          "Comments"
+        ) : null}
         </Container>
       </Col>
       <Col lg={4} className="d-none d-lg-block p-0 p-lg-2">
