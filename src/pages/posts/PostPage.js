@@ -11,6 +11,7 @@ import Post from "./Post";
 
 import CommentCreateForm from "../comments/CommentCreateForm";
 import { useCurrentUser } from "../../contexts/CurrentUserContext";
+import Comment from "../comments/Comment";
 
 function PostPage() {
     // useParams will fetch id from URL and the paramter we set in route inside app.js
@@ -76,9 +77,7 @@ function PostPage() {
 
           {comments.results.length ? (
               comments.results.map(comment => (
-                <p key={comment.id}>
-                  {comment.owner} : {comment.content}
-                </p>
+                <Comment key={comment.id} {...comment}/>
               ))
             ): /*if no commnets check crrent user logged in, if so encourge them to comment*/ currentUser ? (
               <span>No comments yet, add comment</span>
