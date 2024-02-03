@@ -39,8 +39,13 @@ function PostPage() {
                 // In our case the data returned  is the post we requested.
                 // The reason we’re using Promise.all here  is that in a later video we’ll add a  
                 // second API request inside it, to fetch  data about the post comments.
-                const [{data: post}] = await Promise.all([axiosReq.get(`/posts/${id}`)])
+                const [{data: post}, {data: comments}] = await Promise.all([
+                  axiosReq.get(`/posts/${id}`),
+                  axiosReq.get(`/comments/?posts=${id}`)
+                ])
                 setPost({results: [post]})
+                setComments(comments)
+
                 // detched data can be see n in console.log
                 console.log(post)
             } catch(err){
@@ -68,6 +73,20 @@ function PostPage() {
         ) : comments.results.length ? (
           "Comments"
         ) : null}
+
+          {comments.results.length ? (
+              comments.results.map(comment => (
+                <p key={comment.id}>
+                  {comment.owner} : {comment.content}
+                </p>
+              ))
+            ): /*if no commnets check crrent user logged in, if so encourge them to comment*/ currentUser ? (
+              <span>No comments yet, add comment</span>
+            ) : (
+              <span>No comments yet</span>
+            )
+          }
+
         </Container>
       </Col>
       <Col lg={4} className="d-none d-lg-block p-0 p-lg-2">
