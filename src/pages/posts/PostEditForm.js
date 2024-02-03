@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
@@ -7,13 +7,10 @@ import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Image from "react-bootstrap/Image";
 
-import Upload from "../../assets/upload.png";
-
 import styles from "../../styles/PostCreateEditForm.module.css";
 import appStyles from "../../App.module.css";
 import btnStyles from "../../styles/Button.module.css";
-import Asset from "../../components/Asset";
-import { useHistory } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import { axiosReq } from "../../api/axiosDefaults";
 import { Alert } from "react-bootstrap";
 
@@ -31,6 +28,26 @@ function PostEditForm() {
   // we need to create a  reference to our Form.File component so that we can access the image  file when we submit our form.  
   const imageInput = useRef(null)
   const history = useHistory()
+
+//   get id from url
+  const { id } = useParams();
+//   get posted data on page load
+  useEffect(() => {
+    const handleMount = async () => {
+        try{
+            const { data } = await axiosReq.get(`/posts/${id}/`)
+            const { title, content, image, is_owner } = data
+
+            // set data only if owner else redirect to home
+            is_owner ? setPostData({ title, content, image }) : history.push("/")
+        }catch(err){
+            console.log(err)
+        }
+    }
+    handleMount();
+    // setting dependency array for useEffect hook
+  },[history, id])
+
 const handleChange = (event) => {
     setPostData({
         ...postData,
@@ -57,13 +74,18 @@ const handleSubmit = async (event) => {
     const formData = new FormData()
     formData.append('title', title)
     formData.append('content', content)
-    // get first file in image attribute files array
-    formData.append('image',imageInput.current.files[0])
 
+//     So we first need to check if the imageInput  element has a file in it, before we try to  
+// append it to the formData. If it doesn't, the  original file will stay in place in our API.
+    if(imageInput?.current?.files[0]){
+        // get first file in image attribute files array
+        formData.append('image',imageInput.current.files[0])
+    }
     //refresh user access token before making post request
     try{
-        const {data} = await axiosReq.post('/posts/', formData)
-        history.push(`/posts/${data.id}`)
+        await axiosReq.put(`/posts/${id}/`, formData)
+        // redirect user back to post they edited
+        history.push(`/posts/${id}`)
     }catch(err){
         console.log(err)
         if(err.response?.status !== 401){
@@ -107,7 +129,7 @@ const handleSubmit = async (event) => {
         cancel
       </Button>
       <Button className={`${btnStyles.Button} ${btnStyles.Blue}`} type="submit">
-        create
+        Save
       </Button>
     </div>
   );
@@ -120,24 +142,16 @@ const handleSubmit = async (event) => {
             className={`${appStyles.Content} ${styles.Container} d-flex flex-column justify-content-center`}
           >
             <Form.Group className="text-center">
-                {image ? (
-                    <>
-                        <figure>
-                            <Image className={appStyles.Image} src={image} rounded/>
-                        </figure>
-                        <div>
-                            <Form.Label className={`${btnStyles.Button} ${btnStyles.Blue} btn`} htmlFor="image-upload">
-                                Change the image
-                            </Form.Label>
-                        </div>
-                    </>
-                ) : (
-                    <Form.Label
-                    className="d-flex justify-content-center"
-                    htmlFor="image-upload">
-                    <Asset src={Upload} message="Click or tap to upload an image" />
-                </Form.Label>
-                )}
+
+                <figure>
+                    <Image className={appStyles.Image} src={image} rounded/>
+                </figure>
+                <div>
+                    <Form.Label className={`${btnStyles.Button} ${btnStyles.Blue} btn`} htmlFor="image-upload">
+                        Change the image
+                    </Form.Label>
+                </div>
+
                 {/* Image upload '/*' so that only images are accepted */}
                 <Form.File
                     id="image-upload" accept="image/*"
