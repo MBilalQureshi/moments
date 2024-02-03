@@ -64,7 +64,7 @@ const Post = (props) => {
         console.log(err)
       }
     }
-
+    
     const handleUnlike = async () => {
       try {
         await axiosRes.delete(`/likes/${like_id}`)
@@ -81,6 +81,15 @@ const Post = (props) => {
       }
     };
   
+    const handleDelete = async () => {
+      try{
+        await axiosRes.delete(`/posts/${id}/`)
+        history.goBack()
+      }catch(err){
+        console.log(err)
+      }
+    }
+
 //Conditional (ternary) operator chaining: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Conditional_Operator#conditional_chains
   return (
     <Card className={styles.Post}>
@@ -92,7 +101,7 @@ const Post = (props) => {
           <div className='d-flex align-items-center'>
             <span>{updated_at}</span>
             {/* as we want to show edit, delete options to owner only we need to check if its owner and postPage prop exits as true */}
-            {is_owner && postPage && <MoreDropdown handleEdit={handleEdit} />}
+            {is_owner && postPage && <MoreDropdown handleEdit={handleEdit} handleDelete={handleDelete} />}
           </div>
         </Media>
       </Card.Body>
