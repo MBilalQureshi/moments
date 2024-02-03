@@ -2,7 +2,7 @@ import React from 'react'
 import styles from '../../styles/Post.module.css'
 import { useCurrentUser } from '../../contexts/CurrentUserContext';
 import { Card, Media, OverlayTrigger, Tooltip } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import Avatar from '../../components/Avatar'
 import { axiosRes } from '../../api/axiosDefaults';
 import { MoreDropdown } from '../../components/Moredropdown';
@@ -31,6 +31,12 @@ const Post = (props) => {
 
     // check if post belong to current user
     const is_owner = currentUser?.username === owner
+
+    // use history to rediredct user to edit their post
+    const history = useHistory()
+    const handleEdit = () => {
+      history.push(`/posts/${id}/edit`)
+    }
 
     const handleLike = async () => {
       try{
@@ -86,7 +92,7 @@ const Post = (props) => {
           <div className='d-flex align-items-center'>
             <span>{updated_at}</span>
             {/* as we want to show edit, delete options to owner only we need to check if its owner and postPage prop exits as true */}
-            {is_owner && postPage && <MoreDropdown />}
+            {is_owner && postPage && <MoreDropdown handleEdit={handleEdit} />}
           </div>
         </Media>
       </Card.Body>
