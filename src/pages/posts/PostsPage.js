@@ -87,7 +87,8 @@ function PostsPage({message, filter = ""}) {
                     // We’re going to write the function to pass our  ‘next’ prop in a separate utils folder. Then  
                     // we’ll be able to reuse it later on for fetching  other paginated data, like comments and profiles.
                     // So let’s create a new folder called utils in our  src directory, and inside it a utils.js file.  
-                    // Inside, we’ll export an async  function and call it fetchMoreData.  go to utils >utils.js
+                    // Inside, we’ll export an async  function and call it fetchMoreData.  go to utils >utils.js 
+                    //https://www.npmjs.com/package/react-infinite-scroll-component?activeTab=readme
                     <InfiniteScroll 
                     children = {
                         posts.results.map(post => (

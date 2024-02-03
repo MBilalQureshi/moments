@@ -5,6 +5,7 @@ import { Card, Media, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import Avatar from '../../components/Avatar'
 import { axiosRes } from '../../api/axiosDefaults';
+import { MoreDropdown } from '../../components/Moredropdown';
 
 const Post = (props) => {
     const {
@@ -85,7 +86,7 @@ const Post = (props) => {
           <div className='d-flex align-items-center'>
             <span>{updated_at}</span>
             {/* as we want to show edit, delete options to owner only we need to check if its owner and postPage prop exits as true */}
-            {is_owner && postPage && "..."}
+            {is_owner && postPage && <MoreDropdown />}
           </div>
         </Media>
       </Card.Body>
