@@ -48,7 +48,7 @@ function PostPage() {
                 setComments(comments)
 
                 // detched data can be see n in console.log
-                console.log(post)
+                // console.log(post)
             } catch(err){
                 console.log(err)
             }
