@@ -12,6 +12,9 @@ import Post from "./Post";
 import CommentCreateForm from "../comments/CommentCreateForm";
 import { useCurrentUser } from "../../contexts/CurrentUserContext";
 import Comment from "../comments/Comment";
+import InfiniteScroll from "react-infinite-scroll-component";
+import Asset from "../../components/Asset";
+import { fetchMoreData } from "../../utils/utils";
 
 function PostPage() {
     // useParams will fetch id from URL and the paramter we set in route inside app.js
@@ -76,9 +79,23 @@ function PostPage() {
         ) : null}
 
           {comments.results.length ? (
-              comments.results.map(comment => (
-                <Comment key={comment.id} {...comment} setPost={setPost} setComments={setComments}/>
-              ))
+            // Add infinite scroll for comments here
+            <InfiniteScroll 
+              children = {
+                comments.results.map(comment => (
+                  <Comment key={comment.id} {...comment} setPost={setPost} setComments={setComments}/>
+                ))
+              }
+              //Set the dataLength of the InfiniteScroll component to the length of the comments results array
+              dataLength={comments.results.length}
+              //Set the loader prop to the Asset component, passing the Asset component a spinner prop
+              loader={<Asset spinner/>}
+              // Set the hasMore prop to the correct boolean value, based on if the comments object contains a next value or not
+              hasMore={!!comments.next}
+              // Set the next prop to an arrow function that calls the fetchMoreData function we built in the utils file.
+              next={()=>fetchMoreData(comments,setComments)}
+            />
+              
             ): /*if no commnets check crrent user logged in, if so encourge them to comment*/ currentUser ? (
               <span>No comments yet, add comment</span>
             ) : (
