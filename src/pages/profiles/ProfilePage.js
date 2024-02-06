@@ -14,7 +14,8 @@ import PopularProfiles from "./PopularProfiles";
 import { useCurrentUser } from "../../contexts/CurrentUserContext";
 import { useParams } from "react-router-dom";
 import { axiosReq } from "../../api/axiosDefaults";
-import { useSetProfileData } from "../../contexts/ProfileDataContext";
+import { useProfileData, useSetProfileData } from "../../contexts/ProfileDataContext";
+import { Image } from "react-bootstrap";
 
 function ProfilePage() {
   const [hasLoaded, setHasLoaded] = useState(false);
@@ -23,6 +24,12 @@ function ProfilePage() {
   // fetch which profile to display id from url
   const {id} = useParams();
   const setProfileData = useSetProfileData();
+
+  // once we did our API request now lest render data in browser
+  const {pageProfile} = useProfileData()
+  //line 26 in ProfileDataContext.js pageProfile : { results: [] }, this will get data from line pageProfile : {results : [pageProfile]} back
+  const [profile] = pageProfile.results;
+  //console.log(pageProfile.results)    contsians profile data
   // fetch profile data
   useEffect(() => {
     const fetchData = async () => {
@@ -38,18 +45,42 @@ function ProfilePage() {
             console.log(err)
         }
     }
-    
-  },[id, setProfileData])   
+    fetchData()
+  },[id, setProfileData])
 
   const mainProfile = (
     <>
       <Row noGutters className="px-3 text-center">
         <Col lg={3} className="text-lg-left">
-          <p>Image</p>
+          <Image className={styles.ProfileImage}
+           roundedCircle
+        //    JSX is try to render image before API response causing bug 
+        //    src={profile.image} />
+        // Apply conditional chaining ?. to prevent this
+        src={profile?.image} />
         </Col>
         <Col lg={6}>
-          <h3 className="m-2">Profile username</h3>
-          <p>Profile stats</p>
+          <h3 className="m-2">{profile?.owner}</h3>
+          <Row className="justify-content-center no-gutters">
+            <Col xs={3} className="my-2">
+                <div>
+                    {profile?.posts_count}
+                </div>
+                <div>posts</div>
+            </Col>
+            <Col xs={3} className="my-2">
+                <div>
+                    {profile?.follower_count}
+                </div>
+                <div>followers</div>
+            </Col>
+            <Col xs={3} className="my-2">
+                <div>
+                    {profile?.following_count}
+                </div>
+                <div>following</div>
+            </Col>
+          </Row>
         </Col>
         <Col lg={3} className="text-lg-right">
         <p>Follow button</p>
