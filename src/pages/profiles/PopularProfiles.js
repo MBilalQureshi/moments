@@ -5,7 +5,7 @@ import { axiosReq } from '../../api/axiosDefaults'
 import { useCurrentUser } from '../../contexts/CurrentUserContext'
 import Asset from '../../components/Asset'
 
-const PopularProfiles = () => {
+const PopularProfiles = ({ mobile }) => {
 
     const [profileData, setProfileData] = useState({
         //we'll use pageProfile later!
@@ -36,22 +36,32 @@ const PopularProfiles = () => {
         depending on the state of the current user. So, let’s define the currentUser variable 
         */
     },[currentUser])
-  return (
-    <Container className={appStyles.Content}>
-         <p>Most Viewed profiles</p>
-        {popularProfiles.results.length ? (
-        <>
-            {popularProfiles.results.map(profile => (
-            <p key={profile.id}>
-                {profile.owner}
-            </p>
-        ))}
-        </>
-        ) : (
-        <Asset spinner />
-        )}
-    </Container>
-  )
-}
+    return (
+        <Container
+          className={`${appStyles.Content} ${
+            mobile && "d-lg-none text-center mb-3"
+          }`}
+        >
+          {popularProfiles.results.length ? (
+            <>
+              <p>Most followed profiles.</p>
+              {mobile ? (
+                <div className="d-flex justify-content-around">
+                  {popularProfiles.results.slice(0, 4).map((profile) => (
+                    <p key={profile.id}>{profile.owner}</p>
+                  ))}
+                </div>
+              ) : (
+                popularProfiles.results.map((profile) => (
+                  <p key={profile.id}>{profile.owner}</p>
+                ))
+              )}
+            </>
+          ) : (
+            <Asset spinner />
+          )}
+        </Container>
+      );
+    };
 
 export default PopularProfiles
