@@ -45,9 +45,9 @@ const Profile = (props) => {
                 And if the following_id doesn’t  exist we’ll show the follow button. */}
             {!mobile && currentUser && !is_owner && (
                 following_id ? (
-                    <Button className={`${btnStyles.Button} ${btnStyles.BlackOutline}`} onclick={()=>{}}>unfollow</Button>
+                    <Button className={`${btnStyles.Button} ${btnStyles.BlackOutline}`} onClick={()=>{}}>unfollow</Button>
                 ) : (
-                    <Button className={`${btnStyles.Button} ${btnStyles.Black}`} onclick={()=>{}}>follow</Button>
+                    <Button className={`${btnStyles.Button} ${btnStyles.Black}`} onClick={()=>{}}>follow</Button>
                 )
             )}
         </div>

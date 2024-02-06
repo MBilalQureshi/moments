@@ -1,42 +1,16 @@
 import React, { useEffect, useState } from 'react'
 import { Container } from 'react-bootstrap'
 import appStyles from '../../App.module.css'
-import { axiosReq } from '../../api/axiosDefaults'
-import { useCurrentUser } from '../../contexts/CurrentUserContext'
 import Asset from '../../components/Asset'
 import Profile from './Profile'
+import { useProfileData } from '../../contexts/ProfileDataContext'
 
 const PopularProfiles = ({ mobile }) => {
-
-    const [profileData, setProfileData] = useState({
-        //we'll use pageProfile later!
-        pageProfile : { results: [] },
-        popularProfiles : { results: [] },
-    })
-    const { popularProfiles } = profileData
-    const currentUser = useCurrentUser()
-
-    useEffect(() => {
-        const handleMount = async () => {
-            try{
-                // fetching in decending order so that most followed profile is at the top
-                const {data} = await axiosReq.get(
-                    '/profiles/?ordering=-followers_count'
-                )
-                setProfileData((prevState)=>({
-                    ...prevState,
-                    popularProfiles: data,
-                }))
-            } catch(err){
-                console.log(err)
-            }
-        }
-        handleMount()
-        /*Now the question is, when do we run this  effect? Well, every user has to make different  
-        requests to follow and unfollow people,  so we’ll need to re-fetch popularProfiles  
-        depending on the state of the current user. So, let’s define the currentUser variable 
-        */
-    },[currentUser])
+    /* 7
+        Replace the code you copied from Popular Profiles, and call your new useProfileData context to destructure your popularProfiles state.
+        Important: Don't forget to tidy up your imports e.g. adding new imports, removing unused imports, making sure file paths are accurate.
+    */ 
+    const { popularProfiles } = useProfileData();
     return (
         <Container
           className={`${appStyles.Content} ${
