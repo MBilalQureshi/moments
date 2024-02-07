@@ -16,10 +16,17 @@ import { useParams } from "react-router-dom";
 import { axiosReq } from "../../api/axiosDefaults";
 import { useProfileData, useSetProfileData } from "../../contexts/ProfileDataContext";
 import { Button, Image } from "react-bootstrap";
+import InfiniteScroll from "react-infinite-scroll-component";
+import { fetchMoreData } from "../../utils/utils";
+import Post from "../posts/Post";
+import NoResults from "../../assets/no-results.png";
 
 function ProfilePage() {
   const [hasLoaded, setHasLoaded] = useState(false);
   const currentUser = useCurrentUser();
+  const [profilePosts, setProfilePosts] = useState({
+    results : []
+  })
 
   // fetch which profile to display id from url
   const {id} = useParams();
@@ -38,12 +45,16 @@ function ProfilePage() {
   useEffect(() => {
     const fetchData = async () => {
         try{
-            const [{data : pageProfile}] = await Promise.all([axiosReq.get(`/profiles/${id}`)])
+            const [{data : pageProfile},{data : profilePosts}] = await Promise.all([
+              axiosReq.get(`/profiles/${id}`),
+              axiosReq.get(`/posts/?owner__profile=${id}`)    
+          ])
             // setProfileData is part of ProfileDataContext.js
             setProfileData(prevState => ({
                 ...prevState,
                 pageProfile : {results : [pageProfile]}
             }))
+            setProfilePosts(profilePosts)
             setHasLoaded(true);
         }catch(err){
             console.log(err)
@@ -58,9 +69,9 @@ function ProfilePage() {
         <Col lg={3} className="text-lg-left">
           <Image className={styles.ProfileImage}
            roundedCircle
-        //    JSX is try to render image before API response causing bug 
+        //    below JSX is try to render image before API response causing bug 
         //    src={profile.image} />
-        // Apply conditional chaining ?. to prevent this
+        // Apply conditional chaining ?. to prevent this below is solution
         src={profile?.image} />
         </Col>
         <Col lg={6}>
@@ -103,8 +114,32 @@ function ProfilePage() {
   const mainProfilePosts = (
     <>
       <hr />
-      <p className="text-center">Profile owner's posts</p>
+      <p className="text-center">{profile?.owner}'s posts</p>
       <hr />
+      {profilePosts.results.length ? (
+        <InfiniteScroll 
+          children={
+            /*a. Did you set a "children" prop, did you map over the profilePosts.results array and for each 
+              "post" in the array, return a Post component? Did you add a "key" prop, a "setPosts" prop and spread in the 
+              rest of the props from the "post" you are currently iterating over?
+              b. Did you add a "dataLength" prop passing the value of the length of the results array from ProfilePosts?
+              c. Did you add a "loader" prop, giving it the value of an Asset component with a prop of "spinner"?
+              d. Did you add a "hasMore" prop, setting the value as the profilePosts.next boolean?
+              e. Did you add a "next" prop, did you set it's value to an anonymous arrow function that calls the fetchMoreData function?
+              f. Did you pass the arguments profilePost and setProfilePosts to the fetchMoreData function?*/
+            profilePosts.results.map(post => (
+              <Post key={post.id} {...post} setPosts={setProfilePosts}/>
+            ))
+          }
+          dataLength={profilePosts.results.length}
+          loader={ <Asset spinner/>}
+          hasMore={!!profilePosts.next}
+          next={() => fetchMoreData(profilePosts,setProfilePosts)}          
+        />
+      ) : (
+      //4. Did you add a "src" prop to the Asset component and give it the value of "NoResults" (hint: the imported graphic)? e.g
+      <Asset src={NoResults} message={`No results found, ${profile?.owner} hasn't posted yet.`}/>
+      )}
     </>
   );
 
