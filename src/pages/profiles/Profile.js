@@ -17,7 +17,7 @@ const Profile = (props) => {
     const is_owner = currentUser?.username === owner
 
     //well also import handleFollow function as well from userProfileData to hande follow
-    const {handleFollow} = useSetProfileData()
+    const {handleFollow, handleUnfollow} = useSetProfileData()
 
   return (
     <div className={`my-3 d-flex align-items-center ${mobile && "flex-coloumn"}`}>
@@ -49,7 +49,7 @@ const Profile = (props) => {
                 And if the following_id doesn’t  exist we’ll show the follow button. */}
             {!mobile && currentUser && !is_owner && (
                 following_id ? (
-                    <Button className={`${btnStyles.Button} ${btnStyles.BlackOutline}`} onClick={()=>{}}>unfollow</Button>
+                    <Button className={`${btnStyles.Button} ${btnStyles.BlackOutline}`} onClick={()=>handleUnfollow(profile)}>unfollow</Button>
                 ) : (
                     <Button className={`${btnStyles.Button} ${btnStyles.Black}`} onClick={()=>handleFollow(profile)}>follow</Button>
                 )

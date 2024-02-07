@@ -32,7 +32,7 @@ function ProfilePage() {
   const {id} = useParams();
 
   // we need to destructure the below hook and also add handlfollow function
-  const {setProfileData, handleFollow} = useSetProfileData();
+  const {setProfileData, handleFollow, handleUnfollow} = useSetProfileData();
 
   // once we did our API request now lest render data in browser
   const {pageProfile} = useProfileData()
@@ -102,7 +102,7 @@ function ProfilePage() {
         <Col lg={3} className="text-lg-right">
         {currentUser && !is_owner && 
             (profile?.following_id ? (
-                <Button className={`${btnStyles.Button} ${btnStyles.BlackOutline}`} onClick={()=>{}}>unfollow</Button>
+                <Button className={`${btnStyles.Button} ${btnStyles.BlackOutline}`} onClick={()=>handleUnfollow(profile)}>unfollow</Button>
             ) : (
                 <Button className={`${btnStyles.Button} ${btnStyles.Black}`} onClick={()=>handleFollow(profile)}>follow</Button>
             )

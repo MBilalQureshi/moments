@@ -15,6 +15,7 @@ import Comment from "../comments/Comment";
 import InfiniteScroll from "react-infinite-scroll-component";
 import Asset from "../../components/Asset";
 import { fetchMoreData } from "../../utils/utils";
+import PopularProfiles from "../profiles/PopularProfiles";
 
 function PostPage() {
     // useParams will fetch id from URL and the paramter we set in route inside app.js
@@ -63,7 +64,7 @@ function PostPage() {
   return (
     <Row className="h-100">
       <Col className="py-2 p-0 p-lg-2" lg={8}>
-        <p>Popular profiles for mobile</p>
+      <PopularProfiles mobile />
         <Post {...post.results[0]} /*<- key value pairs are passed in as props */ setPosts={setPost} /*<- use it later to handle likes*/ postPage /*<- we don;t need value for it simply applying means it'll retun as truthy value*//>
         <Container className={appStyles.Content}>
           {currentUser ? (
@@ -106,7 +107,7 @@ function PostPage() {
         </Container>
       </Col>
       <Col lg={4} className="d-none d-lg-block p-0 p-lg-2">
-        Popular profiles for desktop
+      <PopularProfiles />
       </Col>
     </Row>
   );

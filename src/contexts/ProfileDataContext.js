@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useCurrentUser } from "./CurrentUserContext";
 import { axiosReq, axiosRes } from "../api/axiosDefaults";
-import { followHelper } from "../utils/utils";
+import { followHelper, unfollowHelper } from "../utils/utils";
 
 /* 1
 Create 2 context objects:
@@ -32,6 +32,7 @@ export const ProfileDataProvider = ({children}) => {
     // But we’ll need the useState and useEffect hooks here, so that the data is fetched on mount.
     // const { popularProfiles } = profileData
 
+    // handle Follow
     const handleFollow = async (clickedProfile) => {
         try{
             // the data we'll send is what profile user just followed basically user id  -> followed: clickedProfile.id
@@ -50,6 +51,25 @@ export const ProfileDataProvider = ({children}) => {
                 },
             }))
 
+        }catch(err){
+            console.log(err)
+        }
+    }
+
+    //handle unfollow
+    const handleUnfollow = async(clickedProfile) => {
+        try{
+            await axiosRes.delete(`/followers/${clickedProfile.following_id}`)
+            setProfileData(prevState => ({
+                ...prevState,
+                pageProfile:{
+                    results: prevState.pageProfile.results.map((profile) => unfollowHelper(profile, clickedProfile)),
+                },
+                popularProfiles :{
+                    ...prevState.popularProfiles,
+                    results: prevState.popularProfiles.results.map((profile) => unfollowHelper(profile, clickedProfile)),
+                }
+            }))
         }catch(err){
             console.log(err)
         }
@@ -92,7 +112,7 @@ export const ProfileDataProvider = ({children}) => {
                 
                 Now that we are sending 2 functions, we’ll need to send them as an object, so we’ll
                 add an extra pair of curly braces, and then add in our handleFollow function.*/}
-            <SetProfileDataContext.Provider value={{setProfileData, handleFollow}}>
+            <SetProfileDataContext.Provider value={{setProfileData, handleFollow, handleUnfollow}}>
                 {children}
             </SetProfileDataContext.Provider>
         </ProfileDataContext.Provider>
