@@ -30,7 +30,9 @@ function ProfilePage() {
 
   // fetch which profile to display id from url
   const {id} = useParams();
-  const setProfileData = useSetProfileData();
+
+  // we need to destructure the below hook and also add handlfollow function
+  const {setProfileData, handleFollow} = useSetProfileData();
 
   // once we did our API request now lest render data in browser
   const {pageProfile} = useProfileData()
@@ -102,7 +104,7 @@ function ProfilePage() {
             (profile?.following_id ? (
                 <Button className={`${btnStyles.Button} ${btnStyles.BlackOutline}`} onClick={()=>{}}>unfollow</Button>
             ) : (
-                <Button className={`${btnStyles.Button} ${btnStyles.Black}`} onClick={()=>{}}>follow</Button>
+                <Button className={`${btnStyles.Button} ${btnStyles.Black}`} onClick={()=>handleFollow(profile)}>follow</Button>
             )
         )}
         </Col>

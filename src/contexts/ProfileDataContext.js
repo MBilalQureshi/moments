@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useCurrentUser } from "./CurrentUserContext";
-import { axiosReq } from "../api/axiosDefaults";
+import { axiosReq, axiosRes } from "../api/axiosDefaults";
 
 /* 1
 Create 2 context objects:
@@ -30,6 +30,15 @@ export const ProfileDataProvider = ({children}) => {
     // eventually, we’ll pass the entire profileData object as the value prop in the ProfileDataContext.Provider.
     // But we’ll need the useState and useEffect hooks here, so that the data is fetched on mount.
     // const { popularProfiles } = profileData
+
+    const handleFollow = async (clickedProfile) => {
+        try{
+            // the data we'll send is what profile user just followed basically user id  -> followed: clickedProfile.id
+            const {data} = await axiosRes.post('/followers/',{followed: clickedProfile.id})
+        }catch(err){
+            console.log(err)
+        }
+    }
 
     const currentUser = useCurrentUser()
 
@@ -63,7 +72,12 @@ export const ProfileDataProvider = ({children}) => {
             Add your SetProfileDataContext.Provider and expose the setProfileData value.
         */
         <ProfileDataContext.Provider value={profileData}>
-            <SetProfileDataContext.Provider value={setProfileData}>
+            {/* Ok, now we have to expose the handleFollow function in the ProfileDataContext.Provider
+                so that the Profile components have access to it when the follow button is clicked.
+                
+                Now that we are sending 2 functions, we’ll need to send them as an object, so we’ll
+                add an extra pair of curly braces, and then add in our handleFollow function.*/}
+            <SetProfileDataContext.Provider value={{setProfileData, handleFollow}}>
                 {children}
             </SetProfileDataContext.Provider>
         </ProfileDataContext.Provider>
