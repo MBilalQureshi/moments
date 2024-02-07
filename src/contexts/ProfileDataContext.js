@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useCurrentUser } from "./CurrentUserContext";
 import { axiosReq, axiosRes } from "../api/axiosDefaults";
+import { followHelper } from "../utils/utils";
 
 /* 1
 Create 2 context objects:
@@ -35,6 +36,20 @@ export const ProfileDataProvider = ({children}) => {
         try{
             // the data we'll send is what profile user just followed basically user id  -> followed: clickedProfile.id
             const {data} = await axiosRes.post('/followers/',{followed: clickedProfile.id})
+
+            setProfileData(prevState => ({
+                // update page profile count and button
+                ...prevState,
+                pageProfile: {
+                    results: prevState.pageProfile.results.map((profile) => followHelper(profile, clickedProfile, data.id)),
+                },
+                // we'll update popular profiles for now
+                popularProfiles : {
+                    ...prevState.popularProfiles,
+                    results: prevState.popularProfiles.results.map((profile) => followHelper(profile, clickedProfile, data.id)),
+                },
+            }))
+
         }catch(err){
             console.log(err)
         }
