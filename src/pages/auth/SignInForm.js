@@ -16,6 +16,7 @@ import appStyles from "../../App.module.css";
 import axios from "axios";
 import { useSetCurrentUser } from "../../contexts/CurrentUserContext";
 import { useRedirect } from "../../hooks/useRedirect";
+import { setTokenTimestamp } from "../../utils/utils";
 
 function SignInForm() {
 
@@ -51,6 +52,9 @@ function SignInForm() {
             const {data} = await axios.post('/dj-rest-auth/login/',signInData)
             // setting curent user value fetched from drf API
             setCurrentUser(data.user)
+
+            // Now this function should extract the expiry date from the access token and save it to the user's browser in local storage.
+            setTokenTimestamp(data);
 
             /*Let’s now update the redirect on successful sign in to send the user back rather than
             have them redirected to the home page.*/

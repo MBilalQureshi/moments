@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
 import { axiosReq, axiosRes } from '../api/axiosDefaults';
 import { useHistory } from 'react-router-dom';
+import { removeTokenTimestamp, shouldRefreshToken } from '../utils/utils';
 
 export const CurrentUserContext = createContext()
 export const SetCurrentUserContext = createContext()
@@ -49,16 +50,25 @@ export const CurrentUserProvider = ({children}) => {
       // request
       axiosReq.interceptors.request.use(
         async (config) => {
-          try {
-            await axios.post("/dj-rest-auth/token/refresh/");
-          } catch (err) {
-            setCurrentUser((prevCurrentUser) => {
-              if (prevCurrentUser) {
-                history.push("/signin");
-              }
-              return null;
-            });
-            return config;
+
+          /**
+           * inside the CurrentUserContext file. Here, inside the request interceptor,
+            we’ll put the entire try-catch block inside an if statement. The if-block will run only if the
+            token should be refreshed, so we’ll auto-import the shouldRefreshToken function and call it.
+           */
+          if(shouldRefreshToken()) {
+            try {
+              await axios.post("/dj-rest-auth/token/refresh/");
+            } catch (err) {
+              setCurrentUser((prevCurrentUser) => {
+                if (prevCurrentUser) {
+                  history.push("/signin");
+                }
+                return null;
+              });
+              removeTokenTimestamp()
+              return config;
+            }
           }
           return config;
         },
@@ -87,6 +97,7 @@ export const CurrentUserProvider = ({children}) => {
                 // and set data to null
                 return null
               })
+              removeTokenTimestamp()
             }
             // If there’s no error refreshing the token, I’ll return an axios instance with the  error config to exit the interceptor.
             return axios(err.config)
