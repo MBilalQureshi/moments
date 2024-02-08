@@ -4,7 +4,7 @@ import { Media } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import Avatar from '../../components/Avatar'
 import { useCurrentUser } from '../../contexts/CurrentUserContext'
-import { MoreDropdown } from '../../components/Moredropdown'
+import { MoreDropdown } from '../../components/MoreDropdown'
 import { axiosRes } from '../../api/axiosDefaults'
 import CommentEditForm from "./CommentEditForm";
 

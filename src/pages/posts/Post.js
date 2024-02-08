@@ -5,7 +5,7 @@ import { Card, Media, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { Link, useHistory } from 'react-router-dom';
 import Avatar from '../../components/Avatar'
 import { axiosRes } from '../../api/axiosDefaults';
-import { MoreDropdown } from '../../components/Moredropdown';
+import { MoreDropdown } from '../../components/MoreDropdown';
 
 const Post = (props) => {
     const {

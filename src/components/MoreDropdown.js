@@ -1,6 +1,8 @@
 import styles from '../styles/MoreDropdown.module.css'
 import Dropdown from 'react-bootstrap/Dropdown'
 import React from 'react';
+//Add the following import.
+import { useHistory } from "react-router";
 
 // https://react-bootstrap-v4.netlify.app/components/dropdowns/#custom-dropdown-components'
 
@@ -52,4 +54,36 @@ export const MoreDropdown = ({handleEdit, handleDelete}) => {
         </Dropdown.Menu>
         </Dropdown>
     )
+}
+
+//Add and export the ProfileEditDropdown component
+export function ProfileEditDropdown({ id }) {
+  const history = useHistory();
+  return (
+    <Dropdown className={`ml-auto px-3 ${styles.Absolute}`} drop="left">
+      <Dropdown.Toggle as={ThreeDots} />
+      <Dropdown.Menu>
+        <Dropdown.Item
+          onClick={() => history.push(`/profiles/${id}/edit`)}
+          aria-label="edit-profile"
+        >
+          <i className="fas fa-edit" /> edit profile
+        </Dropdown.Item>
+        <Dropdown.Item
+          onClick={() => history.push(`/profiles/${id}/edit/username`)}
+          aria-label="edit-username"
+        >
+          <i className="far fa-id-card" />
+          change username
+        </Dropdown.Item>
+        <Dropdown.Item
+          onClick={() => history.push(`/profiles/${id}/edit/password`)}
+          aria-label="edit-password"
+        >
+          <i className="fas fa-key" />
+          change password
+        </Dropdown.Item>
+      </Dropdown.Menu>
+    </Dropdown>
+  );
 }

@@ -20,7 +20,8 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { fetchMoreData } from "../../utils/utils";
 import Post from "../posts/Post";
 import NoResults from "../../assets/no-results.png";
-
+//Add the following import
+import { ProfileEditDropdown } from "../../components/MoreDropdown";
 function ProfilePage() {
   const [hasLoaded, setHasLoaded] = useState(false);
   const currentUser = useCurrentUser();
@@ -67,6 +68,8 @@ function ProfilePage() {
 
   const mainProfile = (
     <>
+    {/*In the mainProfile JSX, add the following code inside the fragment, above the 1st Row component.*/}
+    {profile?.is_owner && <ProfileEditDropdown id={profile?.id} />}
       <Row noGutters className="px-3 text-center">
         <Col lg={3} className="text-lg-left">
           <Image className={styles.ProfileImage}
