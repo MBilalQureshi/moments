@@ -15,12 +15,20 @@ import btnStyles from "../../styles/Button.module.css";
 import appStyles from "../../App.module.css";
 import axios from "axios";
 import { useSetCurrentUser } from "../../contexts/CurrentUserContext";
+import { useRedirect } from "../../hooks/useRedirect";
 
 function SignInForm() {
 
     // const setCurrentUser = useContext(SetCurrentUserContext)
     //we'll change above code to below as its now defined in CurrentUserContext.js
     const setCurrentUser = useSetCurrentUser()
+
+    /**
+     * So, in the SignInForm component, we’ll auto-import our useRedirect
+      hook at the top of our component code. And pass it the “loggedIn” string,
+      as we want to redirect our users away from this page if they are already logged in.
+     */
+    useRedirect('loggedIn')
     
     const [signInData, setSignInData] = useState({
         username : '',
@@ -43,7 +51,11 @@ function SignInForm() {
             const {data} = await axios.post('/dj-rest-auth/login/',signInData)
             // setting curent user value fetched from drf API
             setCurrentUser(data.user)
-            history.push('/')
+
+            /*Let’s now update the redirect on successful sign in to send the user back rather than
+            have them redirected to the home page.*/
+            // history.push('/')
+            history.goBack()
         }
         catch(err){
             setErrors(err.response?.data)

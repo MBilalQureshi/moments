@@ -16,8 +16,11 @@ import Asset from "../../components/Asset";
 import { useHistory } from "react-router-dom";
 import { axiosReq } from "../../api/axiosDefaults";
 import { Alert } from "react-bootstrap";
+import { useRedirect } from "../../hooks/useRedirect";
 
 function PostCreateForm() {
+  //Now stopping any logged out user from creating a post
+  useRedirect('loggedOut')
 
   const [errors, setErrors] = useState({});
 
