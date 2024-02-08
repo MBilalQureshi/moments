@@ -6,6 +6,7 @@ import '@testing-library/jest-dom';
 
 // we’ll first import the setupServer function from the msw library.
 import {setupServer} from 'msw/node'
+import { handlers } from './mocks/handlers';
 
 // Then we’ll create our server by calling the setupServer function we just imported.
 // We’ll call it with the spread handlers array that we’ll also auto-import into the file.
