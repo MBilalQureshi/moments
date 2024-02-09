@@ -15,8 +15,12 @@ import Asset from "../../components/Asset";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { fetchMoreData } from "../../utils/utils";
 import PopularProfiles from "../profiles/PopularProfiles";
+import { useCurrentUser } from "../../contexts/CurrentUserContext";
 
 function PostsPage({message, filter = ""}) {
+    // Refetch posts on user login/logout
+    const currentUser = useCurrentUser();
+
     // Setting fetched post
     const [posts, setPosts] = useState({
         results: []
@@ -50,7 +54,7 @@ function PostsPage({message, filter = ""}) {
         }
         // we'll run this every time pathname or filter changes, also we'll set has Loaded to false as well so that loading spinner is shown to our users
         // added query as well so that each time user search a request can be made
-    },[filter, pathname, query])
+    },[filter, pathname, query,currentUser])
 
 
   return (
